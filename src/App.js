@@ -13,11 +13,11 @@ const App = () => {
   const [currentLng, setCurrentLng] = useState("");
   const [pickCurrentLocation, setPickCurrentLocation] = useState(false);
 
-  useEffect(async () => {
+  useEffect(() => {
     // Checking is location is available and accessible
     if ("geolocation" in navigator) {
       //console.log("Available");
-      await navigator.geolocation.getCurrentPosition(function (position) {
+      navigator.geolocation.getCurrentPosition(function (position) {
         setLat(position.coords.latitude);
         setLng(position.coords.longitude);
         setCurrentLat(position.coords.latitude);
