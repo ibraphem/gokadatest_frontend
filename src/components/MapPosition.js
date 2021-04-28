@@ -29,7 +29,6 @@ class MapPosition extends Component {
       { lat: this.props.dropOffLat, lng: this.props.dropOffLng },
     ];
 
-    console.log(coords);
     return (
       <>
         <Paper

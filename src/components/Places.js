@@ -18,7 +18,6 @@ const Places = ({ value, onChange, onSelect, searchOptions, placeholder }) => {
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <div>
           <TextField
-            id="outlined-basic"
             {...getInputProps({
               placeholder: placeholder,
               className: "location-search-input",
@@ -30,20 +29,15 @@ const Places = ({ value, onChange, onSelect, searchOptions, placeholder }) => {
           <div className="autocomplete-dropdown-container">
             {loading && <div>Loading...</div>}
             {suggestions.map((suggestion, index) => {
-              const className = suggestion.active
-                ? "suggestion-item--active"
-                : "suggestion-item";
-              // inline style for demonstration purpose
-              const style = suggestion.active
-                ? { backgroundColor: "#fafafa", cursor: "pointer" }
-                : { backgroundColor: "#ffffff", cursor: "pointer" };
               return (
-                <List dense {...getSuggestionItemProps(suggestion, {})}>
+                <List dense {...getSuggestionItemProps(suggestion)}>
                   <ListItem style={{ cursor: "pointer" }}>
                     <ListItemIcon>
                       <AddLocationIcon style={{ color: "red" }} />
                     </ListItemIcon>
-                    <ListItemText>{suggestion.description}</ListItemText>
+                    <ListItemText key={index}>
+                      {suggestion.description}
+                    </ListItemText>
                   </ListItem>
                   {/*  <span key={index}>{suggestion.description}</span>*/}
                 </List>
