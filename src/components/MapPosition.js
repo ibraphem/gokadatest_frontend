@@ -130,12 +130,15 @@ class MapPosition extends Component {
               label={this.props.dropOffTitle}
             />
           ) : null}
-          <Polyline
-            path={coords}
-            strokeColor="#00e600"
-            strokeOpacity={0.8}
-            strokeWeight={4}
-          />
+
+          {this.props.dropOffLat !== "" ? (
+            <Polyline
+              path={coords}
+              strokeColor="#00e600"
+              strokeOpacity={0.8}
+              strokeWeight={4}
+            />
+          ) : null}
         </Map>
 
         {this.props.dropOffLat !== "" ? <DummyDetail /> : null}

@@ -8,6 +8,7 @@ import AddLocationIcon from "@material-ui/icons/AddLocation";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 
 const Places = ({ value, onChange, onSelect, searchOptions, placeholder }) => {
+  let i = 0;
   return (
     <PlacesAutocomplete
       value={value}
@@ -30,13 +31,14 @@ const Places = ({ value, onChange, onSelect, searchOptions, placeholder }) => {
           <div className="autocomplete-dropdown-container">
             {loading && <div>Loading...</div>}
             {suggestions.map((suggestion, index) => {
+              i++;
               return (
-                <List dense {...getSuggestionItemProps(suggestion)}>
+                <List dense key={i} {...getSuggestionItemProps(suggestion)}>
                   <ListItem style={{ cursor: "pointer" }}>
-                    <ListItemIcon>
+                    <ListItemIcon key={i}>
                       <AddLocationIcon style={{ color: "red" }} />
                     </ListItemIcon>
-                    <ListItemText key={index}>
+                    <ListItemText key={suggestion.description}>
                       {suggestion.description}
                     </ListItemText>
                   </ListItem>
