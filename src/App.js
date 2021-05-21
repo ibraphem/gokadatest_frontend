@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import MapPosition from "./components/MapPosition";
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
+import Geocode from "react-geocode";
+
 import axios from "axios";
-import { URD } from "./components/Config";
+import { URD, apiKey } from "./components/Config";
 
 const App = () => {
   const [lat, setLat] = useState("");
@@ -14,6 +16,8 @@ const App = () => {
   const [currentLat, setCurrentLat] = useState("");
   const [currentLng, setCurrentLng] = useState("");
   const [dbAddress, setDbAddress] = useState([]);
+  const [pickUpTitle, setPickUpTitle] = useState("Your Location");
+  const [dropOffTitle, setDropOffTitle] = useState("Drop Off");
   const [searchResult, setSearchResult] = useState([]);
   const [pickCurrentLocation, setPickCurrentLocation] = useState(false);
 
@@ -30,6 +34,8 @@ const App = () => {
       });
   };
 
+  Geocode.setApiKey(apiKey);
+
   const fetchFromDb = () => {
     axios
       .get(`${URD}/location`)
@@ -41,6 +47,7 @@ const App = () => {
       });
   };
 
+  // check if address exist in database
   const searchDbForAddress = (address) => {
     let searchDb = dbAddress.filter((loc) => {
       let add = loc.address.toUpperCase();
@@ -52,14 +59,11 @@ const App = () => {
     } else {
       return 0;
     }
-    // console.log(searchDb[0]);
   };
-
-  // console.log(searchDbForAddress("Allen Avenue, Ikeja, Nigeria"));
 
   useEffect(() => {
     fetchFromDb();
-    // Checking is location is available and accessible
+    // Checking if location is available and accessible
     if ("geolocation" in navigator) {
       //console.log("Available");
       navigator.geolocation.getCurrentPosition(function (position) {
@@ -85,7 +89,6 @@ const App = () => {
     }
   };
 
-  // console.log(dbAddress);
   //onchange for dropoff location
   const handleDropOff = (dropOffAddress) => {
     setDropOffAddress(dropOffAddress);
@@ -100,6 +103,7 @@ const App = () => {
       .then((latLng) => {
         setLat(latLng.lat);
         setLng(latLng.lng);
+        setPickUpTitle("Pick Up");
         const locationData = {
           address: address,
           latitude: latLng.lat,
@@ -124,6 +128,7 @@ const App = () => {
           latitude: latLng.lat,
           longitude: latLng.lng,
         };
+
         saveToDb(locationData);
       })
       .catch((error) => console.error("Error", error));
@@ -137,9 +142,22 @@ const App = () => {
   //onselect for current location as pickup location
   const handleSelectCurrentLocation = () => {
     setPickCurrentLocation(false);
-    setPickUpAddress("Current Location");
+    setPickUpTitle("Pick Up");
+
     setLat(currentLat);
     setLng(currentLng);
+
+    //console.log("ooo");
+    Geocode.fromLatLng(lat, lng).then(
+      (response) => {
+        const address = response.results[0].formatted_address;
+        // console.log(address);
+        setPickUpAddress(address);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   };
 
   return (
@@ -157,6 +175,8 @@ const App = () => {
       pickCurrentLocation={pickCurrentLocation}
       handlePickCurrentLocation={handlePickCurrentLocation}
       handleSelectCurrentLocation={handleSelectCurrentLocation}
+      pickUpTitle={pickUpTitle}
+      dropOffTitle={dropOffTitle}
     />
   );
 };

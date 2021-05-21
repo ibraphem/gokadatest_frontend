@@ -3,31 +3,61 @@ import { Map, GoogleApiWrapper, Marker, Polyline } from "google-maps-react";
 import { Grid, Paper } from "@material-ui/core";
 import Places from "./Places";
 import DummyDetail from "./DummyDetail";
+import { apiKey } from "./Config";
 
 // Map style
 const mapStyles = {
   width: "100%",
-  height: "auto",
+  height: "100%",
 };
 
 class MapPosition extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { address: "" };
-  }
+  // restricting search bounds to 50 km of current location
+  defaultBounds = {
+    north: this.props.lat + 0.5,
+    south: this.props.lat - 0.5,
+    east: this.props.lng + 0.5,
+    west: this.props.lng - 0.5,
+  };
+
+  // defining search starting point
+  origin = { lat: this.props.lat, lng: this.props.lng };
 
   // Setting search bounds
   searchOptions = {
-    location: new this.props.google.maps.LatLng(this.props.lat, this.props.lng),
-    radius: 50,
+    componentRestrictions: { country: "ng" },
+    origin: this.origin,
+    bounds: this.defaultBounds,
     types: ["address"],
   };
 
   render() {
+    //coordinate of distance between pickup and drop off
     const coords = [
       { lat: this.props.lat, lng: this.props.lng },
       { lat: this.props.dropOffLat, lng: this.props.dropOffLng },
     ];
+
+    // recentering around location
+    var points = [
+      { lat: this.props.lat, lng: this.props.lng },
+      {
+        lat:
+          this.props.dropOffLat === ""
+            ? this.props.lat - 0.001
+            : this.props.dropOffLat,
+        lng:
+          this.props.dropOffLng === ""
+            ? this.props.lng - 0.002
+            : this.props.dropOffLng,
+      },
+    ];
+
+    // defining bounds for centering
+    var bounds = new this.props.google.maps.LatLngBounds();
+    for (var i = 0; i < points.length; i++) {
+      bounds.extend(points[i]);
+    }
 
     return (
       <>
@@ -76,26 +106,28 @@ class MapPosition extends Component {
             </Grid>
           </Grid>
         </Paper>
+
         <Map
           google={this.props.google}
-          zoom={14}
           style={mapStyles}
           initialCenter={{
             lat: this.props.lat,
             lng: this.props.lng,
           }}
-          center={{
-            lat: this.props.lat,
-            lng: this.props.lng,
-          }}
+          bounds={bounds}
         >
-          <Marker position={{ lat: this.props.lat, lng: this.props.lng }} />
+          <Marker
+            position={{ lat: this.props.lat, lng: this.props.lng }}
+            label={this.props.pickUpTitle}
+          ></Marker>
+
           {this.props.dropOffAddress !== "" ? (
             <Marker
               position={{
                 lat: this.props.dropOffLat,
                 lng: this.props.dropOffLng,
               }}
+              label={this.props.dropOffTitle}
             />
           ) : null}
           <Polyline
@@ -105,6 +137,7 @@ class MapPosition extends Component {
             strokeWeight={4}
           />
         </Map>
+
         {this.props.dropOffLat !== "" ? <DummyDetail /> : null}
       </>
     );
@@ -112,5 +145,5 @@ class MapPosition extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyAEaz96LXFlvRFi-u67_Be1TKnHojGXSRI",
+  apiKey: apiKey,
 })(MapPosition);

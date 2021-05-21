@@ -18,6 +18,7 @@ const Places = ({ value, onChange, onSelect, searchOptions, placeholder }) => {
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <div>
           <TextField
+            size="small"
             {...getInputProps({
               placeholder: placeholder,
               className: "location-search-input",

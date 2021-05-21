@@ -5,11 +5,11 @@ import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles({
   root: {
-    position: "fixed",
+    position: "relative",
     bottom: 0,
-    width: "100%",
-
-    padding: 5,
+    left: "5%",
+    top: 550,
+    width: "90%",
   },
 
   dummy: {
@@ -42,7 +42,7 @@ const DummyDetail = () => {
             style={{
               padding: 10,
               right: 15,
-              margin: 20,
+              margin: 10,
               backgroundColor: "#00b300",
             }}
           >
