@@ -43,11 +43,11 @@ class MapPosition extends Component {
       { lat: this.props.lat, lng: this.props.lng },
       {
         lat:
-          this.props.dropOffLat === ""
+          this.props.dropOffLat === null
             ? this.props.lat - 0.001
             : this.props.dropOffLat,
         lng:
-          this.props.dropOffLng === ""
+          this.props.dropOffLng === null
             ? this.props.lng - 0.002
             : this.props.dropOffLng,
       },
@@ -131,7 +131,7 @@ class MapPosition extends Component {
             />
           ) : null}
 
-          {this.props.dropOffLat !== "" ? (
+          {this.props.dropOffLat !== null ? (
             <Polyline
               path={coords}
               strokeColor="#00e600"
@@ -141,7 +141,7 @@ class MapPosition extends Component {
           ) : null}
         </Map>
 
-        {this.props.dropOffLat !== "" ? <DummyDetail /> : null}
+        {this.props.dropOffLat !== null ? <DummyDetail /> : null}
       </>
     );
   }

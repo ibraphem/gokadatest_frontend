@@ -7,14 +7,14 @@ import axios from "axios";
 import { URD, apiKey } from "./components/Config";
 
 const App = () => {
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
   const [pickUpAddress, setPickUpAddress] = useState("");
   const [dropOffAddress, setDropOffAddress] = useState("");
-  const [dropOffLat, setDropOffLat] = useState("");
-  const [dropOffLng, setDropOffLng] = useState("");
-  const [currentLat, setCurrentLat] = useState("");
-  const [currentLng, setCurrentLng] = useState("");
+  const [dropOffLat, setDropOffLat] = useState(null);
+  const [dropOffLng, setDropOffLng] = useState(null);
+  const [currentLat, setCurrentLat] = useState(null);
+  const [currentLng, setCurrentLng] = useState(null);
   const [dbAddress, setDbAddress] = useState([]);
   const [pickUpTitle, setPickUpTitle] = useState("Your Location");
   const [dropOffTitle, setDropOffTitle] = useState("Drop Off");
@@ -97,6 +97,7 @@ const App = () => {
   //onselect for pickup location
   const handleSelectPickUp = (address) => {
     // searchDbForAddress(address);
+
     setPickUpAddress(address);
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
