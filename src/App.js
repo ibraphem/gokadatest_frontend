@@ -18,7 +18,7 @@ const App = () => {
   const [dbAddress, setDbAddress] = useState([]);
   const [pickUpTitle, setPickUpTitle] = useState("Your Location");
   const [dropOffTitle, setDropOffTitle] = useState("Drop Off");
-  // const [searchResult, setSearchResult] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
   const [pickCurrentLocation, setPickCurrentLocation] = useState(false);
 
   // Save Search to database
@@ -60,6 +60,8 @@ const App = () => {
       return 0;
     }
   };
+
+  console.log(searchResult);
 
   useEffect(() => {
     fetchFromDb();
