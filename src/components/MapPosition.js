@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker, Polyline } from "google-maps-react";
 import { Grid, Paper } from "@material-ui/core";
 import Places from "./Places";
-import DummyDetail from "./DummyDetail";
+//import DummyDetail from "./DummyDetail";
 import { apiKey } from "./Config";
 
 // Map style
 const mapStyles = {
   width: "100%",
   height: "100%",
+  PointerEvent: "none",
 };
 
 class MapPosition extends Component {
@@ -69,7 +70,12 @@ class MapPosition extends Component {
             textAlign: "center",
           }}
         >
-          <Grid container spacing={3}>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12}>
+              <h3 style={{ textAlign: "center", padding: 0 }}>
+                Parcel Request
+              </h3>
+            </Grid>
             <Grid item xs={12} sm={6}>
               <div onClick={this.props.handlePickCurrentLocation}>
                 <Places
@@ -107,41 +113,44 @@ class MapPosition extends Component {
           </Grid>
         </Paper>
 
-        <Map
-          google={this.props.google}
-          style={mapStyles}
-          initialCenter={{
-            lat: this.props.lat,
-            lng: this.props.lng,
-          }}
-          bounds={bounds}
-        >
-          <Marker
-            position={{ lat: this.props.lat, lng: this.props.lng }}
-            label={this.props.pickUpTitle}
-          ></Marker>
-
-          {this.props.dropOffAddress !== "" ? (
+        <Paper>
+          <Map
+            google={this.props.google}
+            style={mapStyles}
+            initialCenter={{
+              lat: this.props.lat,
+              lng: this.props.lng,
+            }}
+            zoom={11}
+            bounds={bounds}
+          >
             <Marker
-              position={{
-                lat: this.props.dropOffLat,
-                lng: this.props.dropOffLng,
-              }}
-              label={this.props.dropOffTitle}
-            />
-          ) : null}
+              position={{ lat: this.props.lat, lng: this.props.lng }}
+              label={this.props.pickUpTitle}
+            ></Marker>
 
-          {this.props.dropOffLat !== null ? (
-            <Polyline
-              path={coords}
-              strokeColor="#00e600"
-              strokeOpacity={0.8}
-              strokeWeight={4}
-            />
-          ) : null}
-        </Map>
+            {this.props.dropOffAddress !== "" ? (
+              <Marker
+                position={{
+                  lat: this.props.dropOffLat,
+                  lng: this.props.dropOffLng,
+                }}
+                label={this.props.dropOffTitle}
+              />
+            ) : null}
 
-        {this.props.dropOffLat !== null ? <DummyDetail /> : null}
+            {this.props.dropOffLat !== null ? (
+              <Polyline
+                path={coords}
+                strokeColor="#00e600"
+                strokeOpacity={0.8}
+                strokeWeight={4}
+              />
+            ) : null}
+          </Map>
+        </Paper>
+
+        {/*    {this.props.dropOffLat !== null ? <DummyDetail /> : null} */}
       </>
     );
   }

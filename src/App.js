@@ -63,12 +63,10 @@ const App = () => {
 
   console.log(searchResult);
 
-  useEffect(() => {
-    fetchFromDb();
-    // Checking if location is available and accessible
+  const getLocation = async () => {
     if ("geolocation" in navigator) {
       //console.log("Available");
-      navigator.geolocation.getCurrentPosition(function (position) {
+      await navigator.geolocation.getCurrentPosition(function (position) {
         setLat(position.coords.latitude);
         setLng(position.coords.longitude);
         setCurrentLat(position.coords.latitude);
@@ -77,6 +75,20 @@ const App = () => {
     } else {
       console.log("Not Available");
     }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      fetchFromDb();
+      // Checking if location is available and accessible
+      getLocation();
+    }
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // Onchange for pickup location
