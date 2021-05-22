@@ -28,7 +28,6 @@ const SuggestionList = ({
       dense
       key={index}
       className={classes.root}
-      s
       {...getSuggestionItemProps(suggestion, hideList)}
     >
       <ListItem style={{ cursor: "pointer" }} onClick={hideList}>

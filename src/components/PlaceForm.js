@@ -19,7 +19,7 @@ const PlaceForm = ({
     } else {
       setAddress(suggestions);
     }
-  }, [address, suggestions]);
+  }, [address, suggestions, searchResult]);
 
   const hideList = () => {
     setShowList(false);
