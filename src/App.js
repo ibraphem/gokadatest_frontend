@@ -18,7 +18,7 @@ const App = () => {
   const [dbAddress, setDbAddress] = useState([]);
   const [pickUpTitle, setPickUpTitle] = useState("Your Location");
   const [dropOffTitle, setDropOffTitle] = useState("Drop Off");
-  const [searchResult, setSearchResult] = useState([]);
+  // const [searchResult, setSearchResult] = useState([]);
   const [pickCurrentLocation, setPickCurrentLocation] = useState(false);
 
   // Save Search to database
@@ -79,7 +79,7 @@ const App = () => {
 
   // Onchange for pickup location
   const handlePickUp = (pickUpAddress) => {
-    setPickCurrentLocation(false);
+    if (searchDbForAddress === 1) setPickCurrentLocation(false);
     if (pickUpAddress) {
       setPickUpAddress(pickUpAddress);
     } else {
@@ -124,6 +124,7 @@ const App = () => {
       .then((latLng) => {
         setDropOffLat(latLng.lat);
         setDropOffLng(latLng.lng);
+        setDropOffTitle("Drop Off");
         const locationData = {
           address: address,
           latitude: latLng.lat,
