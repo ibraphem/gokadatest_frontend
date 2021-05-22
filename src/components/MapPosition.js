@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker, Polyline } from "google-maps-react";
 import { Grid, Paper } from "@material-ui/core";
-import Places from "./Places";
 //import DummyDetail from "./DummyDetail";
 import { apiKey } from "./Config";
+import Place2 from "./Place2";
 
 // Map style
 const mapStyles = {
   width: "100%",
   height: "100%",
+  position: "fixed",
   PointerEvent: "none",
 };
 
@@ -49,7 +50,7 @@ class MapPosition extends Component {
             : this.props.dropOffLat,
         lng:
           this.props.dropOffLng === null
-            ? this.props.lng - 0.002
+            ? this.props.lng - 0.001
             : this.props.dropOffLng,
       },
     ];
@@ -68,6 +69,7 @@ class MapPosition extends Component {
             padding: 10,
             margin: 10,
             textAlign: "center",
+            maxHeight: 200,
           }}
         >
           <Grid container spacing={1}>
@@ -78,11 +80,12 @@ class MapPosition extends Component {
             </Grid>
             <Grid item xs={12} sm={6}>
               <div onClick={this.props.handlePickCurrentLocation}>
-                <Places
+                <Place2
                   value={this.props.pickUpAddress}
                   onChange={this.props.handlePickUp}
                   onSelect={this.props.handleSelectPickUp}
                   searchOptions={this.searchOptions}
+                  searchResult={this.props.searchResultPickUp}
                   placeholder="Select Pickup address..."
                 />
               </div>
@@ -102,11 +105,12 @@ class MapPosition extends Component {
               ) : null}
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Places
+              <Place2
                 value={this.props.dropOffAddress}
                 onChange={this.props.handleDropOff}
                 onSelect={this.props.handleSelectDropOff}
                 searchOptions={this.searchOptions}
+                searchResult={this.props.searchResultDropOff}
                 placeholder="Select dropoff address..."
               />
             </Grid>
@@ -127,6 +131,7 @@ class MapPosition extends Component {
             <Marker
               position={{ lat: this.props.lat, lng: this.props.lng }}
               label={this.props.pickUpTitle}
+              style={{ position: "fixed" }}
             ></Marker>
 
             {this.props.dropOffAddress !== "" ? (
@@ -135,6 +140,7 @@ class MapPosition extends Component {
                   lat: this.props.dropOffLat,
                   lng: this.props.dropOffLng,
                 }}
+                style={{ position: "fixed" }}
                 label={this.props.dropOffTitle}
               />
             ) : null}
@@ -150,7 +156,7 @@ class MapPosition extends Component {
           </Map>
         </Paper>
 
-        {/*    {this.props.dropOffLat !== null ? <DummyDetail /> : null} */}
+        {/*   {this.props.dropOffLat !== null ? <DummyDetail /> : null} */}
       </>
     );
   }

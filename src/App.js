@@ -18,7 +18,8 @@ const App = () => {
   const [dbAddress, setDbAddress] = useState([]);
   const [pickUpTitle, setPickUpTitle] = useState("Your Location");
   const [dropOffTitle, setDropOffTitle] = useState("Drop Off");
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchResultPickUp, setSearchResultPickUp] = useState([]);
+  const [searchResultDropOff, setSearchResultDropOff] = useState([]);
   const [pickCurrentLocation, setPickCurrentLocation] = useState(false);
 
   // Save Search to database
@@ -36,6 +37,7 @@ const App = () => {
 
   Geocode.setApiKey(apiKey);
 
+  //Fetch Db addresses
   const fetchFromDb = () => {
     axios
       .get(`${URD}/location`)
@@ -50,19 +52,19 @@ const App = () => {
   // check if address exist in database
   const searchDbForAddress = (address) => {
     let searchDb = dbAddress.filter((loc) => {
-      let add = loc.address.toUpperCase();
+      let add = loc.description.toUpperCase();
       return add?.indexOf(address.toUpperCase()) > -1;
     });
-    if (searchDb) {
-      setSearchResult(searchDb);
-      return 1;
+    if (searchDb?.length > 1) {
+      return searchDb;
     } else {
-      return 0;
+      return [];
     }
   };
 
-  console.log(searchResult);
+  //fetch address details from DB where address selected - already in DB
 
+  // get user location
   const getLocation = async () => {
     if ("geolocation" in navigator) {
       //console.log("Available");
@@ -77,12 +79,12 @@ const App = () => {
     }
   };
 
+  //set user location on map onload
   useEffect(() => {
     let mounted = true;
 
     if (mounted) {
       fetchFromDb();
-      // Checking if location is available and accessible
       getLocation();
     }
 
@@ -93,9 +95,9 @@ const App = () => {
 
   // Onchange for pickup location
   const handlePickUp = (pickUpAddress) => {
-    if (searchDbForAddress === 1) setPickCurrentLocation(false);
-    if (pickUpAddress) {
+    if (pickUpAddress !== "") {
       setPickUpAddress(pickUpAddress);
+      setSearchResultPickUp(searchDbForAddress(pickUpAddress));
     } else {
       setPickUpAddress("");
       setLat(currentLat);
@@ -106,48 +108,66 @@ const App = () => {
   //onchange for dropoff location
   const handleDropOff = (dropOffAddress) => {
     setDropOffAddress(dropOffAddress);
+    setSearchResultDropOff(searchDbForAddress(dropOffAddress));
   };
 
+  //console.log(searchResultPickUps);
+
   //onselect for pickup location
-  const handleSelectPickUp = (address) => {
-    // searchDbForAddress(address);
-
+  const handleSelectPickUp = async (address) => {
     setPickUpAddress(address);
-    geocodeByAddress(address)
-      .then((results) => getLatLng(results[0]))
-      .then((latLng) => {
-        setLat(latLng.lat);
-        setLng(latLng.lng);
+    if (searchResultPickUp.length > 0) {
+      await axios.get(`${URD}/location/fetch/${address}`).then((response) => {
+        //    console.log(response.data[0]);
+        setLat(response.data[0].latitude);
+        setLng(response.data[0].longitude);
         setPickUpTitle("Pick Up");
-        const locationData = {
-          address: address,
-          latitude: latLng.lat,
-          longitude: latLng.lng,
-        };
-        saveToDb(locationData);
-      })
+      });
+    } else {
+      geocodeByAddress(address)
+        .then((results) => getLatLng(results[0]))
+        .then((latLng) => {
+          setLat(latLng.lat);
+          setLng(latLng.lng);
+          setPickUpTitle("Pick Up");
+          const locationData = {
+            address: address,
+            latitude: latLng.lat,
+            longitude: latLng.lng,
+          };
+          saveToDb(locationData);
+        })
 
-      .catch((error) => console.error("Error", error));
+        .catch((error) => console.error("Error", error));
+    }
   };
 
   //onselect for dropoff location
-  const handleSelectDropOff = (address) => {
+  const handleSelectDropOff = async (address) => {
     setDropOffAddress(address);
-    geocodeByAddress(address)
-      .then((results) => getLatLng(results[0]))
-      .then((latLng) => {
-        setDropOffLat(latLng.lat);
-        setDropOffLng(latLng.lng);
+    if (searchResultDropOff.length > 0) {
+      await axios.get(`${URD}/location/fetch/${address}`).then((response) => {
+        setDropOffLat(response.data[0].latitude);
+        setDropOffLng(response.data[0].longitude);
         setDropOffTitle("Drop Off");
-        const locationData = {
-          address: address,
-          latitude: latLng.lat,
-          longitude: latLng.lng,
-        };
+      });
+    } else {
+      geocodeByAddress(address)
+        .then((results) => getLatLng(results[0]))
+        .then((latLng) => {
+          setDropOffLat(latLng.lat);
+          setDropOffLng(latLng.lng);
+          setDropOffTitle("Drop Off");
+          const locationData = {
+            address: address,
+            latitude: latLng.lat,
+            longitude: latLng.lng,
+          };
 
-        saveToDb(locationData);
-      })
-      .catch((error) => console.error("Error", error));
+          saveToDb(locationData);
+        })
+        .catch((error) => console.error("Error", error));
+    }
   };
 
   // setting state for picking current location as pickup
@@ -193,6 +213,8 @@ const App = () => {
       handleSelectCurrentLocation={handleSelectCurrentLocation}
       pickUpTitle={pickUpTitle}
       dropOffTitle={dropOffTitle}
+      searchResultPickUp={searchResultPickUp}
+      searchResultDropOff={searchResultDropOff}
     />
   );
 };
